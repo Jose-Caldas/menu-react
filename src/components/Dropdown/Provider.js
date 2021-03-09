@@ -1,18 +1,18 @@
-import React, { createContext, useCallback, useEffect, useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 
-const Context = createContext();
+export const Context = React.createContext();
 
 export function DropdownProvider({ children }) {
   const [options, setOptions] = useState([]);
   const [targetId, setTargetId] = useState(null);
   const [cachedId, setCachedId] = useState(null);
 
-  const rgisterOption = useCallback(
+  const registerOption = useCallback(
     ({
       id,
       optionDimensions,
       optionCenterX,
-      WrapperContent,
+      WrappedContent,
       backgroundHeight,
     }) => {
       setOptions((items) => [
@@ -21,13 +21,14 @@ export function DropdownProvider({ children }) {
           id,
           optionDimensions,
           optionCenterX,
-          WrapperContent,
+          WrappedContent,
           backgroundHeight,
         },
       ]);
     },
     [setOptions]
   );
+
   const updateOptionProps = useCallback(
     (optionId, props) => {
       setOptions((items) =>
@@ -35,16 +36,19 @@ export function DropdownProvider({ children }) {
           if (item.id === optionId) {
             item = { ...item, ...props };
           }
+
           return item;
         })
       );
     },
     [setOptions]
   );
+
   const getOptionById = useCallback(
     (id) => options.find((item) => item.id === id),
     [options]
   );
+
   const deleteOptionById = useCallback(
     (id) => {
       setOptions((items) => items.filter((item) => item.id !== id));
@@ -59,7 +63,7 @@ export function DropdownProvider({ children }) {
   return (
     <Context.Provider
       value={{
-        rgisterOption,
+        registerOption,
         updateOptionProps,
         getOptionById,
         deleteOptionById,

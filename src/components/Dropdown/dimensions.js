@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect, useState } from "react";
+import { useState, useCallback, useLayoutEffect } from "react";
 
 const getDimensions = (element) => element.getBoundingClientRect();
 
@@ -8,9 +8,25 @@ export function useDimensions(responsive = true) {
 
   const hook = useCallback((e) => setElement(e), []);
 
-  useLayoutEffect(() => {}, []);
+  useLayoutEffect(() => {
+    if (element) {
+      const updateDimensions = () => {
+        window.requestAnimationFrame(() => {
+          setDimensions(getDimensions(element));
+        });
+      };
+
+      updateDimensions();
+
+      if (responsive) {
+        window.addEventListener("resize", updateDimensions);
+
+        return () => {
+          window.removeEventListener("resize", updateDimensions);
+        };
+      }
+    }
+  }, [element, hook, responsive]);
 
   return [hook, dimensions, element];
 }
-
-// video 1:01:23
